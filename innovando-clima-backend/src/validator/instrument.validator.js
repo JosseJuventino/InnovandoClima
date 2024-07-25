@@ -9,7 +9,7 @@ const createInstrumentValidator = [
 ];
 
 const instrumentInParams = [
-  param('id').isMongoId().withMessage('ID inválido'),
+  param('id').isMongoId().withMessage('ID del instrumento es inválido'),
 ];
 
 module.exports = {

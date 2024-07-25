@@ -10,12 +10,21 @@ const createAbbreviationValidator = [
 const abbreviationInParams = [
   param('id')
     .notEmpty()
-    .withMessage('El ID es requerido')
+    .withMessage('El ID de la abreviacion es requerido')
     .isMongoId()
     .withMessage('El ID debe ser un ID de MongoDB válido'),
+];
+
+const abbreviationInParamsByAbbreviation = [
+  param('abbreviation')
+    .notEmpty()
+    .withMessage('La abreviatura es requerida')
+    .isString()
+    .withMessage('La abreviatura debe ser una cadena de texto')
 ];
 
 module.exports = {
   abbreviationInParams,
   createAbbreviationValidator,
+  abbreviationInParamsByAbbreviation
 };

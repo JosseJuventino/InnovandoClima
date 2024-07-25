@@ -8,11 +8,13 @@ const {
   getAbbreviationById,
   updateAbbreviationById,
   deleteAbbreviationById,
+  getAbbreviationByAbbreviation
 } = require('../controllers/abreviation.controller');
 
 const {
   abbreviationInParams,
   createAbbreviationValidator,
+  abbreviationInParamsByAbbreviation, 
 } = require('../validator/abreviation.validator');
 
 const { runValidation } = require('../middlewares/validator.middleware');
@@ -22,5 +24,6 @@ router.get('/', getAllAbbreviations);
 router.get('/:id', abbreviationInParams, runValidation, getAbbreviationById);
 router.put('/:id', abbreviationInParams, runValidation, updateAbbreviationById);
 router.delete('/:id', abbreviationInParams, runValidation, deleteAbbreviationById);
+router.get('/abbreviation/:abbreviation', abbreviationInParamsByAbbreviation, runValidation, getAbbreviationByAbbreviation);
 
 module.exports = router;

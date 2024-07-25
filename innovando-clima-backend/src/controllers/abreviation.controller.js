@@ -42,6 +42,17 @@ const getAbbreviationById = async (req, res, next) => {
   }
 };
 
+const getAbbreviationByAbbreviation = async (req, res, next) => {
+  try {
+    const { abbreviation } = req.params;
+    const abbreviationData = await Abbreviation.findOne({ abbreviation });
+    if (!abbreviationData) throw httpError(404, 'Abreviatura no encontrada');
+    res.status(200).json({ data: abbreviationData });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Obtener todas las abreviaturas
 const getAllAbbreviations = async (req, res, next) => {
   try {
@@ -93,4 +104,5 @@ module.exports = {
   getAllAbbreviations,
   updateAbbreviationById,
   deleteAbbreviationById,
+  getAbbreviationByAbbreviation,
 };
