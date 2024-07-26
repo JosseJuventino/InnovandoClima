@@ -1,12 +1,8 @@
-"use client"
-
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Tooltip, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { getAllStations } from '@/services/station.service';
-
-// Fix for default icon issue with React-Leaflet
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -17,9 +13,43 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const MapComponent = ({ setSelectedPlace, leftWidth }) => {
-    const map = useMap();
+const MapComponent = ({ map, stations, setSelectedPlace, selectedStationId, setSelectedStationId }) => {
+    return (
+        <>
+            <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            {stations.map((station) => (
+                <Marker
+                    key={station._id}
+                    position={station.location}
+                    icon={L.divIcon({
+                        className: `${selectedStationId === station._id ? 'selected animate' : ''}`,
+                        html: `<div class="w-8 h-8 border-[3px] ${selectedStationId === station._id ? 'border-blue-600' : 'border-white'} rounded-full overflow-hidden">
+                                 <img src="${station.images[0]}" class="w-full h-full object-cover" />
+                               </div>`
+                    })}
+                    eventHandlers={{
+                        click: () => {
+                            setSelectedPlace(station);
+                            setSelectedStationId(station._id);
+                        }
+                    }}
+                >
+                    <Tooltip>{station.name}</Tooltip>
+                </Marker>
+            ))}
+        </>
+    );
+}
+
+const MapWrapper = ({ setSelectedPlace, leftWidth }) => {
     const [stations, setStations] = useState([]);
+    const [selectedStationId, setSelectedStationId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [suggestions, setSuggestions] = useState([]);
+    const [map, setMap] = useState(null);
 
     useEffect(() => {
         const fetchStations = async () => {
@@ -35,49 +65,61 @@ const MapComponent = ({ setSelectedPlace, leftWidth }) => {
     }, []);
 
     useEffect(() => {
-        const handleResize = () => {
-            map.invalidateSize();
-        };
+        if (searchTerm) {
+            const filtered = stations.filter(station =>
+                station.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setSuggestions(filtered);
+        } else {
+            setSuggestions([]);
+        }
+    }, [searchTerm, stations]);
 
-        handleResize(); // Initial call to set correct size
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, [map, leftWidth]);
+    const handleSuggestionClick = (station) => {
+        setSelectedPlace(station);
+        setSelectedStationId(station._id);
+        setSearchTerm(""); // Clear the search input
+        setSuggestions([]); // Clear suggestions after selection
+        if (map) {
+            map.flyTo(station.location, 13); // Fly to the station's location with a zoom level of 13
+        }
+    };
 
     return (
-        <div className='z-10'>
-            <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                className='z-10'
-            />
-            {stations.map((station) => (
-                <Marker
-                    key={station._id}
-                    position={station.location}
-                    icon={L.divIcon({
-                        className: 'custom-marker',
-                        html: `<div class="w-8 h-8 border-2 outline-none border-white rounded-full overflow-hidden">
-                                 <img src="${station.images[0]}" class="w-full h-full object-cover" />
-                               </div>`
-                    })}
-                    eventHandlers={{
-                        click: () => {
-                            setSelectedPlace(station);
-                        }
-                    }}
+        <div style={{ position: 'relative', height: '100%' }}>
+            <div style={{ position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
+                <input
+                    type="text"
+                    placeholder="Buscar estación..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className='px-5 py-2 outline-none shadow-xl border-none rounded-full'
                 />
-            ))}
+                {suggestions.length > 0 && (
+                    <ul style={{ listStyleType: 'none', padding: 0, margin: 0, backgroundColor: 'white', border: '1px solid #ccc', maxHeight: '150px', overflowY: 'auto', position: 'absolute', width: '100%' }}>
+                        {suggestions.map(suggestion => (
+                            <li
+                                key={suggestion._id}
+                                onClick={() => handleSuggestionClick(suggestion)}
+                                style={{ padding: '5px', cursor: 'pointer' }}
+                            >
+                                {suggestion.name}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+            <MapContainer center={[13.794185, -88.896529]} zoom={8.5} style={{ height: "100%", width: "100%", zIndex: 2 }} whenCreated={setMap}>
+                <MapComponent
+                    map={map}
+                    stations={stations}
+                    setSelectedPlace={setSelectedPlace}
+                    selectedStationId={selectedStationId}
+                    setSelectedStationId={setSelectedStationId}
+                />
+            </MapContainer>
         </div>
     );
 }
-
-const MapWrapper = ({ setSelectedPlace, leftWidth }) => (
-    <MapContainer className='z-10' center={[13.794185, -88.896529]} zoom={8.5} style={{ height: "100%", width: "100%" }}>
-        <MapComponent setSelectedPlace={setSelectedPlace} leftWidth={leftWidth} />
-    </MapContainer>
-);
 
 export default MapWrapper;

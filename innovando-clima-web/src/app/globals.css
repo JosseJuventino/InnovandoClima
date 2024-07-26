@@ -5,3 +5,20 @@
 .icon-size {
   font-size: 40px; /* Ajustar el tamaño según sea necesario */
 }
+
+.custom-marker.selected {
+  border-color: blue;
+}
+
+.custom-marker.animate {
+  animation: bounce 0.3s infinite alternate;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-5px);
+  }
+}

@@ -37,7 +37,7 @@ export default function Home() {
       style={{ userSelect: isResizing ? 'none' : 'auto' }} // Disable text selection during dragging
     >
       <div className="flex-none" style={{ width: `${leftWidth}%` }}>
-        <div className="h-full overflow-hidden">
+        <div className="h-full overflow-hidden z-10">
           <Map setSelectedPlace={setSelectedPlace} leftWidth={leftWidth} />
         </div>
       </div>

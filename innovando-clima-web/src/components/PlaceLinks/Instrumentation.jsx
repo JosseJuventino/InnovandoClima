@@ -1,7 +1,25 @@
-export function Instrumentation() {
+import { useState } from 'react';
+import { InstrumentationDetail } from '../InstrumentationDetail';
+import { InstrumentationList } from '../InstrmentationList';
+
+export function Instrumentation({ place, onSelectInstrument }) {
+    const [selectedInstrument, setSelectedInstrument] = useState(null);
+
+    const handleSelectInstrument = (instrument) => {
+        setSelectedInstrument(instrument);
+    };
+
+    const handleBack = () => {
+        setSelectedInstrument(null);
+    };
+
     return (
-        <div className="p-4">
-            <h2 className="text-xl font-bold">Instrumentos de la estación</h2>
+        <div>
+            {selectedInstrument ? (
+                <InstrumentationDetail instrument={selectedInstrument} onBack={handleBack} />
+            ) : (
+                <InstrumentationList place={place} onSelectInstrument={handleSelectInstrument} />
+            )}
         </div>
     );
-};
+}

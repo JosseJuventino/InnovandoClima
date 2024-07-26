@@ -9,7 +9,6 @@ export const ReportModal = ({ isOpen, onClose, idStation, selectedParameter, set
     const [allData, setAllData] = useState({});
 
     useEffect(() => {
-        // Set "Todos" as the default selected parameter
         setSelectedParameter("Todos");
     }, [setSelectedParameter]);
 
@@ -71,11 +70,10 @@ export const ReportModal = ({ isOpen, onClose, idStation, selectedParameter, set
         }
     };
 
-    // Conditional rendering based on isOpen prop
-    if (!isOpen) return null;  // If isOpen is false, return null to render nothing
+    if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
                 <h2 className="text-xl font-bold mb-4">Generar Informe</h2>
 
