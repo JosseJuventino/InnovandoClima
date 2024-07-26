@@ -1,6 +1,7 @@
 // src/controllers/instrument.controller.js
 const httpError = require('http-errors');
 const Instrument = require('../models/instrument.model');
+const Station = require('../models/station.model');
 
 const createInstrument = async (req, res, next) => {
   try {
@@ -56,6 +57,20 @@ const updateInstrumentById = async (req, res, next) => {
     next(err);
   }
 };
+const getInstrumentsByStation = async (req, res, next) => {
+  try {
+    const { stationId } = req.params;
+    const station = await Station.findById(stationId).populate('instruments.instrumentId');
+
+    if (!station) {
+      throw httpError(404, 'Station not found');
+    }
+
+    res.status(200).json({ data: station.instruments });
+  } catch (err) {
+    next(err);
+  }
+};
 
 const deleteInstrumentById = async (req, res, next) => {
   try {
@@ -74,4 +89,5 @@ module.exports = {
   getAllInstruments,
   updateInstrumentById,
   deleteInstrumentById,
+  getInstrumentsByStation
 };

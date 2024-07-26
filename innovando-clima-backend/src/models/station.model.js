@@ -1,4 +1,3 @@
-// src/models/Station.js
 const { Schema, model } = require('mongoose');
 
 const stationSchema = new Schema({
@@ -18,9 +17,16 @@ const stationSchema = new Schema({
   ],
   instruments: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Instrument',
-      required: true,
+      instrumentId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Instrument',
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        min: 1,
+      }
     }
   ],
   stationNumber: {

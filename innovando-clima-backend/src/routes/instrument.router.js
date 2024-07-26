@@ -8,6 +8,7 @@ const {
   getInstrumentById,
   updateInstrumentById,
   deleteInstrumentById,
+  getInstrumentsByStation
 } = require('../controllers/instrument.controller');
 
 const {
@@ -22,5 +23,6 @@ router.get('/', getAllInstruments);
 router.get('/:id', instrumentInParams, runValidation, getInstrumentById);
 router.put('/:id', instrumentInParams, runValidation, updateInstrumentById);
 router.delete('/:id', instrumentInParams, runValidation, deleteInstrumentById);
+router.get('/station/:stationId', runValidation, getInstrumentsByStation);
 
 module.exports = router;
