@@ -9,7 +9,7 @@ const uri = envconfig.MONGO_URI;
 const connect = async () => {
   try {
     await mongoose.connect(uri);
-    debug("Connected successfully to database!");
+    debug("Estas conectado a la BD!");
   } catch (error) {
     debug("[Error]: Can't ;/!");
   }
