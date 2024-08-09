@@ -11,7 +11,7 @@ const connect = async () => {
     await mongoose.connect(uri);
     debug("Connected successfully to database!");
   } catch (error) {
-    debug("[Error]: Can't connect to databa!");
+    debug("[Error]: Can't connect to data!");
   }
 };
 
